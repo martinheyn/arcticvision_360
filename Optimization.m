@@ -11,7 +11,8 @@ imageSets = imageSet(fullfile(path_inputimages_single));
 
 % Read Images
 for j=1:6
-    I{j} = read(imageSets, j);
+    k = -1*(-7+j); % Oden images are clockwise, not counter-clockwise
+    I{j} = read(imageSets, k);
 end
 
 % Masking out ship

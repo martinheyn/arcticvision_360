@@ -7,7 +7,7 @@ clear all; % Important to run clear all before to not save other variables mista
 
 % Save Initialization outputs
 path_output = uigetdir(pwd,'Select directory to save outputs of initialization function...');
-save(fullfile(path_output,'initialization_outputs3.mat'));
+save(fullfile(path_output,'initialization_outputs4.mat'));
 
 %% MakePanorama
 % Load initialization outputs

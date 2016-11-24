@@ -51,10 +51,10 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %      end
      
 %     load shipmasks
-     [path_output,file_output] = uigetfile(pwd,'Select shipmasks...');
-     load(fullfile(file_output,path_output));
+%     [path_output,file_output] = uigetfile(pwd,'Selectbackup2...');
+%     load(fullfile(file_output,path_output));
 % 
-     clear file_output path_output
+%     clear file_output path_output
     
     % or load existing Masks
     % Set Path for Ship Masks
