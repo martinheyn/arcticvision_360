@@ -93,24 +93,27 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     CamOrientation{4} = [+45 0 0];
 %     CamOrientation{5} = [+42 0 -90];
 %     CamOrientation{6} = [+42 0 -180];
-    CamOrientation{1} = [+45 0 180];
-    CamOrientation{2} = [+45 0 90];
+    CamOrientation{1} = [+42 0 180];
+    CamOrientation{2} = [+42 0 90];
     CamOrientation{3} = [+45 0 0];
-    CamOrientation{4} = [+45 0 0];
-    CamOrientation{5} = [+45 0 -90];
-    CamOrientation{6} = [+45 0 -180];
+    CamOrientation{4} = [45 0 0];
+    CamOrientation{5} = [42 0 -90];
+    CamOrientation{6} = [42 0 -180];
 
     %% Set Case Orientations
     waitbar(0.25,h,sprintf('Setting Case Orientations...'))
-    %CaseOrientation{1} = [-3 -1.8 0.7]; %RIGHT CAMERA MOUNT PARAMETERS
-    %CaseOrientation{2} = [1 1.8 -0.5]; %LEFT CAMERA MOUNT PARAMETERS
-    CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
-    CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
+%     %CaseOrientation{1} = [-3 -1.8 0.7]; %RIGHT CAMERA MOUNT PARAMETERS
+%     %CaseOrientation{2} = [1 1.8 -0.5]; %LEFT CAMERA MOUNT PARAMETERS
+% %     CaseOrientation{1} = [1.2 -1.67 1.67]; %RIGHT CAMERA MOUNT PARAMETERS
+% %     CaseOrientation{2} = [1.2 1.67 -1.67]; %LEFT CAMERA MOUNT PARAMETERS
+%     CaseOrientation{1} = [-2 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
+%     CaseOrientation{2} = [1 0 0]; %LEFT CAMERA MOUNT PARAMETERS
+
 
     %% Masking out ship
     waitbar(0.3,h,sprintf('Masking out Ship...'))
     for i=1:6
-        I_masked{i} = masking_ship(I_calib{i},ship_masks{i},'ShowMessages','on','ShowImages','off');
+        I_masked{i} = masking_ship(I_calib{i},ship_masks{i},'ShowMessages','on','ShowImages','off');        
     end
 
     %% Undistort Images
@@ -118,8 +121,16 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     for i=1:6
         I_lenscorrected{i} = image_undistortion(I_masked{i},cameraParams,'ShowMessages','on','ShowImages','off');
     end
-
+    
     %% Calculate T_ortho (Orthorectification of Images)
+    
+%     CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
+%     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
+     CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
+     CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
+
+
+    
     waitbar(0.4,h,sprintf('Calculate T-ortho and imageView...'))
     for i=1:3
     [T_ortho{i},imageView{i}] = T_ortho_calc(I_lenscorrected{i},CamOrientation{i},CaseOrientation{1},cameraParams,'ScaleFactor',1,'ShowMessages','on','ShowImages','off');
@@ -155,12 +166,12 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 
     %% Calculate panoView
     waitbar(0.85,h,sprintf('Calculate panoView...'))
-    panoView = calculate_panosize(T_align,I_orthorectified,'ScaleFactor',5,'ShowMessages','on');
+    panoView = calculate_panosize(T_align,I_orthorectified,'ScaleFactor',3,'ShowMessages','on');
 
     %% Place Images on Panorama to create blending masks easier
     waitbar(0.9,h,sprintf('Place Images on panorama...'))
     for i=1:6
-        I_aligned{i} = place_on_pano(I_orthorectified{i},T_align{i},panoView,'ShowMessages','on','ShowImages','on');
+        I_aligned{i} = place_on_pano(I_orthorectified{i},T_align{i},panoView,'ShowMessages','on','ShowImages','off');
     end
 
     %% Set blending masks
@@ -173,20 +184,25 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
         blending_masks{4} = logical(I_aligned{5});
         blending_masks{5} = logical(I_aligned{6});
     %end
+    
 	
 	% Create blending masks by hand with roipoly (white area should be at the next image)
 %     for j=1:5
 %         blending_masks{j} = zeros(size(I_aligned{j}));
 %     end
 %     blending_masks{1}(:,:,1) = double(roipoly(I_aligned{1}+I_aligned{2}));
-%     panorama = image_stitching(I_aligned{1},I_aligned{2},'ShowMessages','on');
+     panorama = image_stitching(I_aligned{1},I_aligned{2},'ShowMessages','on');
 %     blending_masks{2}(:,:,1) = double(roipoly(panorama+I_aligned{3}));
-%     panorama = image_stitching(panorama,I_aligned{3},'ShowMessages','on');
+     panorama = image_stitching(panorama,I_aligned{3},'ShowMessages','on');
 %     blending_masks{3}(:,:,1) = double(roipoly(panorama+I_aligned{4}));
-%     panorama = image_stitching(panorama,I_aligned{4},'ShowMessages','on');
+     panorama = image_stitching(panorama,I_aligned{4},'ShowMessages','on');
 %     blending_masks{4}(:,:,1) = double(roipoly(panorama+I_aligned{5}));
-%     panorama = image_stitching(panorama,I_aligned{5},'ShowMessages','on');
-%     blending_masks{5}(:,:,1) = double(roipoly(panorama+I_aligned{6}));
+     panorama = image_stitching(panorama,I_aligned{5},'ShowMessages','on');
+     panorama = image_stitching(panorama,I_aligned{6},'ShowMessages','on');
+      figure
+      imshow(panorama)
+%      title(strcat('Cam1:',num2str(m),'Cam2:0'))
+     %     blending_masks{5}(:,:,1) = double(roipoly(panorama+I_aligned{6}));
 %     for j=1:5
 %         for k=1:3
 %             blending_masks{j}(:,:,k) = blending_masks{j}(:,:,1);
@@ -201,6 +217,8 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     for i=1:5
 %         blending_masks{i} = logical(read(blendingScene, i));
 %     end
+    %end
+
 waitbar(1,h,sprintf('Processing succeded!'))
 end
 
