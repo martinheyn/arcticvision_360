@@ -93,8 +93,8 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     CamOrientation{4} = [+45 0 0];
 %     CamOrientation{5} = [+42 0 -90];
 %     CamOrientation{6} = [+42 0 -180];
-    CamOrientation{1} = [+42 0 180];
-    CamOrientation{2} = [+42 0 90];
+    CamOrientation{1} = [+45 0 180];
+    CamOrientation{2} = [+45 0 90];
     CamOrientation{3} = [+45 0 0];
     CamOrientation{4} = [45 0 0];
     CamOrientation{5} = [42 0 -90];
@@ -123,11 +123,11 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     end
     
     %% Calculate T_ortho (Orthorectification of Images)
-    for m = -2:1:2
-        for n = -2:1:2
+%     for m = -2:1:2
+%         for n = -2:1:2
 %    
-     m
-     n
+     m = 0;
+     n = 0;
      %CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
 %     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
      CaseOrientation{1} = [m 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
@@ -148,15 +148,32 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     for i=1:6
     I_orthorectified{i} = imwarp(I_lenscorrected{i},T_ortho{i},'linear','OutputView',imageView{i},'Fill',0,'SmoothEdges',true);
     end
-
+    
+    %% Find features in images
+    [Feature{1},Points{1}] = detectfeatures(I_orthorectified{1},'ShowMessages','on','ShowImages','off');
+    [Feature{2},Points{2}] = detectfeatures(I_orthorectified{2},'ShowMessages','on','ShowImages','off');
+    [Feature{3},Points{3}] = detectfeatures(I_orthorectified{3},'ShowMessages','on','ShowImages','off');
+    [Feature{4},Points{4}] = detectfeatures(I_orthorectified{4},'ShowMessages','on','ShowImages','off');
+    [Feature{5},Points{5}] = detectfeatures(I_orthorectified{5},'ShowMessages','on','ShowImages','off');
+    [Feature{6},Points{6}] = detectfeatures(I_orthorectified{6},'ShowMessages','on','ShowImages','off');
+ 
     %% Estimate T_align with feature detection and matching
     waitbar(0.55,h,sprintf('Estimate T-align and pixel_loc...'))
     T_align{1} = affine2d(eye(3,3));
-    [T_align{2},pixel_loc{1}{1},pixel_loc{1}{2}] = estimate_translation(I_orthorectified{1},I_orthorectified{2},'ShowMessages','on','ShowImages','off');
-    [T_align{3},pixel_loc{2}{2},pixel_loc{2}{3}] = estimate_translation(I_orthorectified{2},I_orthorectified{3},'ShowMessages','on','ShowImages','off');
-    [T_align{4},pixel_loc{3}{3},pixel_loc{3}{4}] = estimate_translation(I_orthorectified{3},I_orthorectified{4},'ShowMessages','on','ShowImages','off');
-    [T_align{5},pixel_loc{4}{4},pixel_loc{4}{5}] = estimate_translation(I_orthorectified{4},I_orthorectified{5},'ShowMessages','on','ShowImages','off');
-    [T_align{6},pixel_loc{5}{5},pixel_loc{5}{6}] = estimate_translation(I_orthorectified{5},I_orthorectified{6},'ShowMessages','on','ShowImages','off');
+    [T_align{2},pixel_loc{1}{1},pixel_loc{1}{2}] = estimate_translation(I_orthorectified{1},I_orthorectified{2},Feature{1},Feature{2},Points{1},Points{2},'ShowMessages','on','ShowImages','off');
+    [T_align{3},pixel_loc{2}{2},pixel_loc{2}{3}] = estimate_translation(I_orthorectified{2},I_orthorectified{3},Feature{2},Feature{3},Points{2},Points{3},'ShowMessages','on','ShowImages','off');
+    [T_align{4},pixel_loc{3}{3},pixel_loc{3}{4}] = estimate_translation(I_orthorectified{3},I_orthorectified{4},Feature{3},Feature{4},Points{3},Points{4},'ShowMessages','on','ShowImages','off');
+    [T_align{5},pixel_loc{4}{4},pixel_loc{4}{5}] = estimate_translation(I_orthorectified{4},I_orthorectified{5},Feature{4},Feature{5},Points{4},Points{5},'ShowMessages','on','ShowImages','off');
+    [T_align{6},pixel_loc{5}{5},pixel_loc{5}{6}] = estimate_translation(I_orthorectified{5},I_orthorectified{6},Feature{5},Feature{6},Points{5},Points{6},'ShowMessages','on','ShowImages','off');
+    
+%     %% Estimate T_align with feature detection and matching
+%     waitbar(0.55,h,sprintf('Estimate T-align and pixel_loc...'))
+%     T_align{1} = affine2d(eye(3,3));
+%     [T_align{2},pixel_loc{1}{1},pixel_loc{1}{2}] = estimate_translation(I_orthorectified{1},I_orthorectified{2},'ShowMessages','on','ShowImages','off');
+%     [T_align{3},pixel_loc{2}{2},pixel_loc{2}{3}] = estimate_translation(I_orthorectified{2},I_orthorectified{3},'ShowMessages','on','ShowImages','off');
+%     [T_align{4},pixel_loc{3}{3},pixel_loc{3}{4}] = estimate_translation(I_orthorectified{3},I_orthorectified{4},'ShowMessages','on','ShowImages','off');
+%     [T_align{5},pixel_loc{4}{4},pixel_loc{4}{5}] = estimate_translation(I_orthorectified{4},I_orthorectified{5},'ShowMessages','on','ShowImages','off');
+%     [T_align{6},pixel_loc{5}{5},pixel_loc{5}{6}] = estimate_translation(I_orthorectified{5},I_orthorectified{6},'ShowMessages','on','ShowImages','off');
 
     %% Invert T_align matrizes to have image 1 as reference image
     waitbar(0.8,h,sprintf('Invert T-align Matrices...'))
@@ -203,10 +220,10 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     blending_masks{4}(:,:,1) = double(roipoly(panorama+I_aligned{5}));
      panorama = image_stitching(panorama,I_aligned{5},'ShowMessages','on');
      panorama = image_stitching(panorama,I_aligned{6},'ShowMessages','on');
-     
-     save(strcat('Init_C1-',num2str(m),'-0-0_C2-',num2str(n),'-0-0.mat'),'panorama')
-        end
-    end
+     imshow(panorama)
+     %save(strcat('Init_C1-',num2str(m),'-0-0_C2-',num2str(n),'-0-0.mat'),'panorama')
+%         end
+%     end
 %       figure
 %       imshow(panorama)
 %      title(strcat('Cam1:',num2str(m),'Cam2:0'))
@@ -435,7 +452,56 @@ parse(p,I,camOrientation,caseOrientation,cameraParams,varargin{:})
 end
 
 %%
-function [T_align,PixelLoc1,PixelLoc2] = estimate_translation(I1,I2,varargin)
+
+function [Features,ValidPoints]= detectfeatures(I1,varargin)
+p = inputParser;
+defaultShowImages = 'off';
+expectedShowImages = {'on','off'};
+defaultShowMessages = 'off';
+expectedShowMessages = {'on','off'};
+classes = {'uint8'};
+attributes = {'size',[NaN,NaN,3]};
+addRequired(p,'I1',@(x)validateattributes(x,classes,attributes));
+addParameter(p,'ShowImages',defaultShowImages,...
+                 @(x) any(validatestring(x,expectedShowImages)));
+addParameter(p,'ShowMessages',defaultShowMessages,...
+                 @(x) any(validatestring(x,expectedShowMessages)));
+parse(p,I1,varargin{:})
+
+% Grayscale Images
+I1 = rgb2gray(I1);
+%% Detect Features off Image 1
+points1 = detectSURFFeatures(I1,'NumOctaves',1,'NumScaleLevels',16,'MetricThreshold',100);
+[features1, points1] = extractFeatures(I1, points1);
+
+% Erase Outlier Features
+mask1 = I1;
+mask1(mask1>0) = 1;
+maskidx1=find(mask1>0);
+pointsidx1 = sub2ind(size(I1),round(points1.Location(:,2)),round(points1.Location(:,1)));
+validPoints1=ismember(pointsidx1,maskidx1);
+notValidPointsidx1 = find(validPoints1==0);
+validpoints1 = points1.Location;
+validpoints1(notValidPointsidx1,:)=[];
+features1(notValidPointsidx1,:) = [];
+
+Features = features1;
+ValidPoints = validpoints1;
+
+if strcmp(p.Results.ShowImages,'on')
+    f1=figure; imshow(I1);
+    title('Detected Features on Image1');
+    hold on;
+    points1.plot
+    hold off;
+    pause(0.5)
+    close(f1);
+end
+
+
+end
+
+function [T_align,PixelLoc1,PixelLoc2] = estimate_translation(I1,I2,Features1,Features2,ValidPoints1,ValidPoints2,varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % Inputs
 % I1: Image 1 | rgb uint8 0..255
@@ -457,71 +523,33 @@ expectedShowImages = {'on','off'};
 defaultShowMessages = 'off';
 expectedShowMessages = {'on','off'};
 classes = {'uint8'};
+classes2 = {'single'};
 attributes = {'size',[NaN,NaN,3]};
+attributes2 = {'size',[NaN,NaN]};
 addRequired(p,'I1',@(x)validateattributes(x,classes,attributes));
 addRequired(p,'I2',@(x)validateattributes(x,classes,attributes));
+addRequired(p,'Features1',@(x)validateattributes(x,classes2,attributes2));
+addRequired(p,'Features2',@(x)validateattributes(x,classes2,attributes2));
+addRequired(p,'ValidPoints1',@(x)validateattributes(x,classes2,attributes2));
+addRequired(p,'ValidPoints2',@(x)validateattributes(x,classes2,attributes2));
 addParameter(p,'ShowImages',defaultShowImages,...
                  @(x) any(validatestring(x,expectedShowImages)));
 addParameter(p,'ShowMessages',defaultShowMessages,...
                  @(x) any(validatestring(x,expectedShowMessages)));
-parse(p,I1,I2,varargin{:})
+parse(p,I1,I2,Features1,Features2,ValidPoints1,ValidPoints2,varargin{:})
 
 % Grayscale Images
 I1 = rgb2gray(I1);
 I2 = rgb2gray(I2);
 
 %% Detect Features off Image 1
-points1 = detectSURFFeatures(I1,'NumOctaves',1,'NumScaleLevels',16,'MetricThreshold',100);
-[features1, points1] = extractFeatures(I1, points1);
-
-% Erase Outlier Features
-mask1 = I1;
-mask1(mask1>0) = 1;
-maskidx1=find(mask1>0);
-pointsidx1 = sub2ind(size(I1),round(points1.Location(:,2)),round(points1.Location(:,1)));
-validPoints1=ismember(pointsidx1,maskidx1);
-notValidPointsidx1 = find(validPoints1==0);
-validpoints1 = points1.Location;
-validpoints1(notValidPointsidx1,:)=[];
-features1(notValidPointsidx1,:) = [];
-
-
-if strcmp(p.Results.ShowImages,'on')
-    f1=figure; imshow(I1);
-    title('Detected Features on Image1');
-    hold on;
-    points1.plot
-    hold off;
-    pause(0.5)
-    close(f1);
-end
+validpoints1 = ValidPoints1;
+features1 = Features1;
 
 
 %% Detect Features off Image 2
-points2 = detectSURFFeatures(I2,'NumOctaves',1,'NumScaleLevels',16,'MetricThreshold',100);
-[features2, points2] = extractFeatures(I2, points2);
-
-% Erase Outlier Features
-mask2 = I2;
-mask2(mask2>0) = 1;
-maskidx2=find(mask2>0);
-pointsidx2 = sub2ind(size(I2),round(points2.Location(:,2)),round(points2.Location(:,1)));
-validPoints2=ismember(pointsidx2,maskidx2);
-notValidPointsidx2 = find(validPoints2==0);
-validpoints2 = points2.Location;
-validpoints2(notValidPointsidx2,:)=[];
-features2(notValidPointsidx2,:) = [];
-
-
-if strcmp(p.Results.ShowImages,'on')
-    f2 = figure; imshow(I2);
-    title('Detected Features on Image2');
-    hold on;
-    points2.plot
-    hold off;
-    pause(0.5)
-    close(f2);
-end
+validpoints2 = ValidPoints2;
+features2 = Features2;
 
 %% Find corresponding Points between two Images
 indexPairs = matchFeatures(features1, features2,'Method','Approximate','MatchThreshold',50,'MaxRatio',0.5,'Unique',true,'Metric','SSD');
@@ -538,7 +566,7 @@ end
 
 %% Estimate geometric Transform for I2
 [T_align, matchedPoints1, matchedPoints2,status] = estimateGeometricTransform(matchedPoints1, matchedPoints2,...
-    'similarity', 'Confidence', 75, 'MaxNumTrials', 1000, 'MaxDistance',25); %1.5 for right side
+    'affine', 'Confidence', 75, 'MaxNumTrials', 1000, 'MaxDistance',25); %1.5 for right side
 
 if status == 1
     fprintf('WARNING: No Matches found!\n');
@@ -582,6 +610,155 @@ end
 % T.T(2,1) = 0;
 
 end
+
+
+% function [T_align,PixelLoc1,PixelLoc2] = estimate_translation(I1,I2,varargin)
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% % Inputs
+% % I1: Image 1 | rgb uint8 0..255
+% % I2: Image 2 | rgb uint8 0..255
+% %
+% % Optional Input Arguments (Name value pairs)
+% % 'ShowMessages' | 'on' or 'off' | default is 'off' | Displays Messages
+% % 'ShowImages' | 'on' or 'off' | default is 'off' | Displays Images
+% % 
+% % Outputs
+% % T: 1x1 affine 2d Object
+% % PixelLoc1: Locations [xi yi] of Feature Points 1 | numeric Nx2 Array
+% % PixelLoc2: Locations [xi yi] of Feature Points 2 | numeric Nx2 Array
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% p = inputParser;
+% defaultShowImages = 'off';
+% expectedShowImages = {'on','off'};
+% defaultShowMessages = 'off';
+% expectedShowMessages = {'on','off'};
+% classes = {'uint8'};
+% attributes = {'size',[NaN,NaN,3]};
+% addRequired(p,'I1',@(x)validateattributes(x,classes,attributes));
+% addRequired(p,'I2',@(x)validateattributes(x,classes,attributes));
+% addParameter(p,'ShowImages',defaultShowImages,...
+%                  @(x) any(validatestring(x,expectedShowImages)));
+% addParameter(p,'ShowMessages',defaultShowMessages,...
+%                  @(x) any(validatestring(x,expectedShowMessages)));
+% parse(p,I1,I2,varargin{:})
+% 
+% % Grayscale Images
+% I1 = rgb2gray(I1);
+% I2 = rgb2gray(I2);
+% 
+% %% Detect Features off Image 1
+% points1 = detectSURFFeatures(I1,'NumOctaves',1,'NumScaleLevels',16,'MetricThreshold',100);
+% [features1, points1] = extractFeatures(I1, points1);
+% 
+% % Erase Outlier Features
+% mask1 = I1;
+% mask1(mask1>0) = 1;
+% maskidx1=find(mask1>0);
+% pointsidx1 = sub2ind(size(I1),round(points1.Location(:,2)),round(points1.Location(:,1)));
+% validPoints1=ismember(pointsidx1,maskidx1);
+% notValidPointsidx1 = find(validPoints1==0);
+% validpoints1 = points1.Location;
+% validpoints1(notValidPointsidx1,:)=[];
+% features1(notValidPointsidx1,:) = [];
+% 
+% 
+% if strcmp(p.Results.ShowImages,'on')
+%     f1=figure; imshow(I1);
+%     title('Detected Features on Image1');
+%     hold on;
+%     points1.plot
+%     hold off;
+%     pause(0.5)
+%     close(f1);
+% end
+% 
+% 
+% %% Detect Features off Image 2
+% points2 = detectSURFFeatures(I2,'NumOctaves',1,'NumScaleLevels',16,'MetricThreshold',100);
+% [features2, points2] = extractFeatures(I2, points2);
+% 
+% % Erase Outlier Features
+% mask2 = I2;
+% mask2(mask2>0) = 1;
+% maskidx2=find(mask2>0);
+% pointsidx2 = sub2ind(size(I2),round(points2.Location(:,2)),round(points2.Location(:,1)));
+% validPoints2=ismember(pointsidx2,maskidx2);
+% notValidPointsidx2 = find(validPoints2==0);
+% validpoints2 = points2.Location;
+% validpoints2(notValidPointsidx2,:)=[];
+% features2(notValidPointsidx2,:) = [];
+% 
+% 
+% if strcmp(p.Results.ShowImages,'on')
+%     f2 = figure; imshow(I2);
+%     title('Detected Features on Image2');
+%     hold on;
+%     points2.plot
+%     hold off;
+%     pause(0.5)
+%     close(f2);
+% end
+% 
+% %% Find corresponding Points between two Images
+% indexPairs = matchFeatures(features1, features2,'Method','Approximate','MatchThreshold',50,'MaxRatio',0.5,'Unique',true,'Metric','SSD');
+% matchedPoints1 = validpoints1(indexPairs(:,1), :);
+% matchedPoints2 = validpoints2(indexPairs(:,2), :);
+% 
+% if strcmp(p.Results.ShowImages,'on')
+%     f3 = figure; showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);
+%     title('Matching Features');
+%     legend('matchedPts1','matchedPts2');
+%     pause(0.5)
+%     close(f3);
+% end
+% 
+% %% Estimate geometric Transform for I2
+% [T_align, matchedPoints1, matchedPoints2,status] = estimateGeometricTransform(matchedPoints1, matchedPoints2,...
+%     'similarity', 'Confidence', 75, 'MaxNumTrials', 1000, 'MaxDistance',25); %1.5 for right side
+% 
+% if status == 1
+%     fprintf('WARNING: No Matches found!\n');
+%     return;
+% end
+% 
+% %% Alternative Estimate Translation
+% % x = mean(matchedPoints2(:,1)-matchedPoints1(:,1));
+% % y = mean(matchedPoints2(:,2)-matchedPoints1(:,2));
+% % 
+% % Tl = [ 1 0 x; 0 1 y; 0 0 1];
+% % T = projective2d(Tl');
+% 
+% %% Extract Locations of Features
+% PixelLoc1 = round(matchedPoints1);
+% PixelLoc2 = round(matchedPoints2);
+% 
+% % %% Calculate Average Pixel Intensity
+% % linidx1=sub2ind(size(I1),round(matchedPoints1(:,2)),round(matchedPoints1(:,1)));
+% % linidx2=sub2ind(size(I2),round(matchedPoints2(:,2)),round(matchedPoints2(:,1)));
+% % PixelIntense1 = double(I1(linidx1));
+% % PixelIntense2 = double(I2(linidx2));
+% 
+% %% Show Images and Messages
+% if strcmp(p.Results.ShowImages,'on')
+%     f4 = figure; showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2,'montage');
+%     title('Matching Features after Geometric Transform Estimation');
+%     legend('matchedPts1','matchedPts2');
+% end
+% if strcmp(p.Results.ShowMessages,'on')
+%     fprintf('Feature Matching of Images complete!\n');
+% end
+% 
+% %%%TRY
+% % sf=sign(T.T(1,1))*sqrt(T.T(1,1)^2+T.T(2,1)^2);
+% % T.T(3,1) = T.T(3,1) * sf;
+% % T.T(3,2) = T.T(3,2) * sf;
+% % T.T(1:2,1:2) = eye(2,2);
+% 
+% % T.T(1,2) = 0;
+% % T.T(2,1) = 0;
+% 
+% end
 
 %%
 function panoView = calculate_panosize(T,I,varargin)
