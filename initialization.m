@@ -123,11 +123,15 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     end
     
     %% Calculate T_ortho (Orthorectification of Images)
-    
-%     CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
+    for m = -2:1:2
+        for n = -2:1:2
+%    
+     m
+     n
+     %CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
 %     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
-     CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
-     CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
+     CaseOrientation{1} = [m 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
+     CaseOrientation{2} = [n 0 0]; %LEFT CAMERA MOUNT PARAMETERS
 
 
     
@@ -199,8 +203,12 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     blending_masks{4}(:,:,1) = double(roipoly(panorama+I_aligned{5}));
      panorama = image_stitching(panorama,I_aligned{5},'ShowMessages','on');
      panorama = image_stitching(panorama,I_aligned{6},'ShowMessages','on');
-      figure
-      imshow(panorama)
+     
+     save(strcat('Init_C1-',num2str(m),'-0-0_C2-',num2str(n),'-0-0.mat'),'panorama')
+        end
+    end
+%       figure
+%       imshow(panorama)
 %      title(strcat('Cam1:',num2str(m),'Cam2:0'))
      %     blending_masks{5}(:,:,1) = double(roipoly(panorama+I_aligned{6}));
 %     for j=1:5

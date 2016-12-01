@@ -32,34 +32,34 @@ camOrientation{3} = [+45 0 0];
 camOrientation{4} = [+45 0 0];
 
 % Define Intervals and steps to try out for optimization
-n_N = -2.5; % Start value of orientation (I set these values because of personal intension and visual inspection)
-n_r = 1; % The Range around the start value -> Intervall = n_N-n_r:n_N+n_r
-n_i = 2; % In how many values should the intervall be divided (number of loops)
+n_N = 0; % Start value of orientation (I set these values because of personal intension and visual inspection)
+n_r = 2.5; % The Range around the start value -> Intervall = n_N-n_r:n_N+n_r
+n_i = 5; % In how many values should the intervall be divided (number of loops)
 n_s = (n_r*2)/(n_i+1);
 
-m_N = 2.5;
-m_r = 1;
-m_i = 2;
+m_N = 0;
+m_r = 2.5;
+m_i = 5;
 m_s = (m_r*2)/(m_i+1);
 
 k_N = 0;
-k_r = 1;
-k_i = 2;
+k_r = 2.5;
+k_i = 5;
 k_s = (k_r*2)/(k_i+1);
 
 l_N = 0;
-l_r = 1;
-l_i = 2;
+l_r = 2.5;
+l_i = 5;
 l_s = (l_r*2)/(l_i+1);
 
 o_N = 0;
-o_r = 3;
-o_i = 2;
+o_r = 2;
+o_i = 4;
 o_s = (o_r*2)/(o_i+1);
 
 p_N = 0;
-p_r = 3;
-p_i = 2;
+p_r = 2;
+p_i = 4;
 p_s = (p_r*2)/(p_i+1);
 
 counter = 1;
