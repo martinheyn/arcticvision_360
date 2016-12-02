@@ -93,10 +93,10 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     CamOrientation{4} = [+45 0 0];
 %     CamOrientation{5} = [+42 0 -90];
 %     CamOrientation{6} = [+42 0 -180];
-    CamOrientation{1} = [+45 0 180];
-    CamOrientation{2} = [+45 0 90];
-    CamOrientation{3} = [+45 0 0];
-    CamOrientation{4} = [45 0 0];
+    CamOrientation{1} = [+42 0 180];
+    CamOrientation{2} = [+42 0 90];
+    CamOrientation{3} = [+42 0 0];
+    CamOrientation{4} = [42 0 0];
     CamOrientation{5} = [42 0 -90];
     CamOrientation{6} = [42 0 -180];
 
@@ -130,8 +130,8 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
      n = 0;
      %CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
 %     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
-     CaseOrientation{1} = [m 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
-     CaseOrientation{2} = [n 0 0]; %LEFT CAMERA MOUNT PARAMETERS
+     CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
+     CaseOrientation{2} = [5 5 0]; %LEFT CAMERA MOUNT PARAMETERS
 
 
     
@@ -388,6 +388,7 @@ addParameter(p,'ShowImages',defaultShowImages,...
 addParameter(p,'ShowMessages',defaultShowMessages,...
                  @(x) any(validatestring(x,expectedShowMessages)));
 parse(p,I,camOrientation,caseOrientation,cameraParams,varargin{:})
+   
     rotx = caseOrientation(1);
     roty = caseOrientation(2);
     rotz = caseOrientation(3);
@@ -498,6 +499,9 @@ if strcmp(p.Results.ShowImages,'on')
     close(f1);
 end
 
+if strcmp(p.Results.ShowMessages,'on')
+    fprintf('Detection of features complete\n');
+end
 
 end
 
@@ -552,7 +556,7 @@ validpoints2 = ValidPoints2;
 features2 = Features2;
 
 %% Find corresponding Points between two Images
-indexPairs = matchFeatures(features1, features2,'Method','Approximate','MatchThreshold',50,'MaxRatio',0.5,'Unique',true,'Metric','SSD');
+indexPairs = matchFeatures(features1, features2,'Method','Approximate','MatchThreshold',10,'MaxRatio',0.2,'Unique',true,'Metric','SSD');
 matchedPoints1 = validpoints1(indexPairs(:,1), :);
 matchedPoints2 = validpoints2(indexPairs(:,2), :);
 
@@ -821,7 +825,7 @@ if strcmp(p.Results.ShowMessages,'on')
     fprintf('Panorama Size Calculation complete!\n');
 end
 
-if height > 10000 || width > 10000
+if height > 12000 || width > 12000
     fprintf('WARNING: Panorama Size %i x %i too big!\n',height,width);
     pause();
     return;
