@@ -271,7 +271,7 @@ switch singlemultiple
 %             Map3(:,:,:,i) = Imap3;
 %             Map4(:,:,:,i) = Imap4;
 
-            IceConST(i,:) = [PercentageST(1),PercentageST(2),PercentageST(3)};
+            IceConST(i,:) = [PercentageST(1),PercentageST(2),PercentageST(3)];
             IceConKM(i,:) = [PercentageKM(1),PercentageKM(2),PercentageKM(3)];
             IceFloeSize(i,:) = [PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
             
