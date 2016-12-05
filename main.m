@@ -25,5 +25,5 @@ clear all; % Important to run clear all before to not save other variables mista
 % imageSets = imageSet(path_inputimages_multi,'recursive');
 % 
 % % Run MakePanorama function
-% Panorama = makePanorama(imageSets,ship_masks,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
+% [Panorama,IceConST,IceConKM,IceFloeDis] = makePanorama(imageSets,ship_masks,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
 % 

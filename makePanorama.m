@@ -1,4 +1,4 @@
-function Panorama = makePanorama(imageSet,ship_masks,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
+function [Panorama,IceConST,IceConKM,IceFloeSize] = makePanorama(imageSet,ship_masks,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MakePanorama Function
 % Inputs: 
@@ -114,19 +114,19 @@ switch singlemultiple
         PrePanorama = [PrePanorama; zeros(400,size(PrePanorama,2))];
     
         % Detect Ice Concentration Simple Thres
-        [Imap1,Percentage] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,4,'ShowMessages','on','ShowImages','off');
+        [Imap1,PercentageST] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,4,'ShowMessages','on','ShowImages','off');
         % Insert into Image
-        Panorama = rgb2gray(insertText(PrePanorama,[1 size(PrePanorama,1)-300],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+        Panorama = rgb2gray(insertText(PrePanorama,[1 size(PrePanorama,1)-300],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
         % Detect Ice Concentration Kmeans
-        [Imap2,Percentage] = ice_detection(PrePanorama,'KmeansAlgorithm',1,90,130,4,'ShowMessages','on','ShowImages','off');
+        [Imap2,PercentageKM] = ice_detection(PrePanorama,'KmeansAlgorithm',1,90,130,4,'ShowMessages','on','ShowImages','off');
         % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 size(PrePanorama,1)-200],sprintf('Ice-Water Concentration(Kmeans): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+        Panorama = rgb2gray(insertText(Panorama,[1 size(PrePanorama,1)-200],sprintf('Ice-Water Concentration(Kmeans): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
         waitbar(0.9,h,sprintf('Ice Floe Distribution Analysis...'))
         
         % Detect Ice Floe Distribution Map
-        [Imap3,Percentage] = ice_detection(PrePanorama,'FloeDistAlgorithm',4,90,130,4,'ShowMessages','on','ShowImages','off');
+        [Imap3,PercentageFloeDis] = ice_detection(PrePanorama,'FloeDistAlgorithm',4,90,130,4,'ShowMessages','on','ShowImages','off');
         % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 size(PrePanorama,1)-100],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+        Panorama = rgb2gray(insertText(Panorama,[1 size(PrePanorama,1)-100],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
         % Detect Ice Floe Distribution Edges
         [Imap4,~] = ice_detection(PrePanorama,'Edges',4,90,110,2,'ShowMessages','on','ShowImages','off');
         % Insert into Image
@@ -138,7 +138,9 @@ switch singlemultiple
         imwrite(uint8(Imap4),fullfile(ImagePath5,ImageFile5));
         
         waitbar(1,h,sprintf('Processing Succeded!'))
-        
+        IceConST = [PercentageST(1),PercentageST(2),PercentageST(3)};
+        IceConKM = [PercentageKM(1),PercentageKM(2),PercentageKM(3)];
+        IceFloeSize = [PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
         
         
         
@@ -155,6 +157,17 @@ switch singlemultiple
         VideoFile3 = strcat('IceConMapKMeans',VideoFile1);
         VideoFile4 = strcat('IcefloeDistMap',VideoFile1);
         VideoFile5 = strcat('IcefloeDistEdge',VideoFile1);
+        
+        moviefile1 = VideoWriter(strcat(VideoPath1,'\',VideoFile1),'MPEG-4');
+        moviefile1.FrameRate = 5;
+        moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2),'MPEG-4');
+        moviefile2.FrameRate = 5;
+        moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3),'MPEG-4');
+        moviefile3.FrameRate = 5;
+        moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4),'MPEG-4');
+        moviefile4.FrameRate = 5;
+        moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5),'MPEG-4');
+        moviefile5.FrameRate = 5;
         
         timedone=0;
         h = waitbar(0,'Reading Images...','Name','Creating Panoramic Video (This can take several minutes!)'); %open waitbar
@@ -235,39 +248,60 @@ switch singlemultiple
             PrePanorama = [PrePanorama; zeros(400,size(PrePanorama,2))];
 
             % Detect Ice Concentration Simple Thres
-            [Imap1,Percentage] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
+            [Imap1,PercentageST] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
             % Insert into Image
-            SPanorama = rgb2gray(insertText(PrePanorama,[1 size(PrePanorama,1)-300],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+            SPanorama = rgb2gray(insertText(PrePanorama,[1 size(PrePanorama,1)-300],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
             % Detect Ice Concentration KMeans
-            [Imap2,Percentage] = ice_detection(PrePanorama,'KmeansAlgorithm',1,90,130,8,'ShowMessages','on','ShowImages','off');
+            [Imap2,PercentageKM] = ice_detection(PrePanorama,'KmeansAlgorithm',1,90,130,8,'ShowMessages','on','ShowImages','off');
             % Insert into Image
-            SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-200],sprintf('Ice-Water Concentration(Kmean): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+            SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-200],sprintf('Ice-Water Concentration(Kmean): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
             waitbar(0.9/length(imageSet)*i,h,sprintf('Processing Frame %i of %i | Remaining time: %2.2f min\n Ice Floe Distribution Analysis...',i,length(imageSet),est_time/60))
             
             % Detect Ice Floe Distribution Map
-            [Imap3,Percentage] = ice_detection(PrePanorama,'FloeDistAlgorithm',4,90,130,8,'ShowMessages','on','ShowImages','off');
+            [Imap3,PercentageFloeDis] = ice_detection(PrePanorama,'FloeDistAlgorithm',4,90,130,8,'ShowMessages','on','ShowImages','off');
             % Insert into Image
-            SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-100],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',Percentage(1),Percentage(2),Percentage(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
+            SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-100],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
             % Detect Ice Floe Distribution Edges
             [Imap4,~] = ice_detection(PrePanorama,'Edges',4,90,110,32,'ShowMessages','on','ShowImages','off');
            
             % Store Images in Sequence Variable
-            Panorama(:,:,1,i) = SPanorama;
-            Map1(:,:,:,i) = Imap1;
-            Map2(:,:,:,i) = Imap2;
-            Map3(:,:,:,i) = Imap3;
-            Map4(:,:,:,i) = Imap4;
+%             Panorama(:,:,1,i) = SPanorama;
+%             Map1(:,:,:,i) = Imap1;
+%             Map2(:,:,:,i) = Imap2;
+%             Map3(:,:,:,i) = Imap3;
+%             Map4(:,:,:,i) = Imap4;
+
+            IceConST(i,:) = [PercentageST(1),PercentageST(2),PercentageST(3)};
+            IceConKM(i,:) = [PercentageKM(1),PercentageKM(2),PercentageKM(3)];
+            IceFloeSize(i,:) = [PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
+            
+            Panorama(:,:,1) = SPanorama;
+            Map1(:,:,:) = Imap1;
+            Map2(:,:,:) = Imap2;
+            Map3(:,:,:) = Imap3;
+            Map4(:,:,:) = Imap4;
+            
+            % Write into VideoFiles
+            writeVideo(moviefile1,Panorama);
+            writeVideo(moviefile2,Map1);
+            writeVideo(moviefile3,Map2);
+            writeVideo(moviefile4,Map3);
+            writeVideo(moviefile5,Map4);
+            
+            clear Panorama Map1 Map2 Map3 Map4
+            
             % update waitbar
             time = toc;
             timedone = timedone+time;
             est_time = timedone/i*length(imageSet)-timedone;
+            
         end
         waitbar(0.99/length(imageSet)*i,h,sprintf('Processing complete | Remaining time: %2.2f min\n Generating Video File...',0.08))
-        createVideoFile(Panorama,fullfile(VideoPath1,VideoFile1),4) %Save Videofile
-        createVideoFile((Map1),fullfile(VideoPath2,VideoFile2),4) %Save Videofile
-        createVideoFile((Map2),fullfile(VideoPath3,VideoFile3),4) %Save Videofile
-        createVideoFile((Map3),fullfile(VideoPath4,VideoFile4),1) %Save Videofile
-        createVideoFile((Map4),fullfile(VideoPath5,VideoFile5),1) %Save Videofile
+%         createVideoFile(Panorama,fullfile(VideoPath1,VideoFile1),4) %Save Videofile
+%         createVideoFile((Map1),fullfile(VideoPath2,VideoFile2),4) %Save Videofile
+%         createVideoFile((Map2),fullfile(VideoPath3,VideoFile3),4) %Save Videofile
+%         createVideoFile((Map3),fullfile(VideoPath4,VideoFile4),1) %Save Videofile
+%         createVideoFile((Map4),fullfile(VideoPath5,VideoFile5),1) %Save Videofile
         waitbar(1,h,sprintf('Processing Succeded!'))
 end
 
