@@ -138,7 +138,7 @@ switch singlemultiple
         imwrite(uint8(Imap4),fullfile(ImagePath5,ImageFile5));
         
         waitbar(1,h,sprintf('Processing Succeded!'))
-        IceConST = [PercentageST(1),PercentageST(2),PercentageST(3)};
+        IceConST = [PercentageST(1),PercentageST(2),PercentageST(3)];
         IceConKM = [PercentageKM(1),PercentageKM(2),PercentageKM(3)];
         IceFloeSize = [PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
         
