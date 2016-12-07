@@ -158,16 +158,21 @@ switch singlemultiple
         VideoFile4 = strcat('IcefloeDistMap',VideoFile1);
         VideoFile5 = strcat('IcefloeDistEdge',VideoFile1);
         
-        moviefile1 = VideoWriter(strcat(VideoPath1,'\',VideoFile1),'MPEG-4');
+        moviefile1 = VideoWriter(strcat(VideoPath1,'\',VideoFile1));
         moviefile1.FrameRate = 5;
-        moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2),'MPEG-4');
+        open(moviefile1);
+        moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2));
         moviefile2.FrameRate = 5;
-        moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3),'MPEG-4');
+        open(moviefile2);
+        moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3));
         moviefile3.FrameRate = 5;
-        moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4),'MPEG-4');
+        open(moviefile3);
+        moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4));
         moviefile4.FrameRate = 5;
-        moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5),'MPEG-4');
+        open(moviefile4);
+        moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5));
         moviefile5.FrameRate = 5;
+        open(moviefile5);
         
         timedone=0;
         h = waitbar(0,'Reading Images...','Name','Creating Panoramic Video (This can take several minutes!)'); %open waitbar
@@ -302,6 +307,11 @@ switch singlemultiple
 %         createVideoFile((Map2),fullfile(VideoPath3,VideoFile3),4) %Save Videofile
 %         createVideoFile((Map3),fullfile(VideoPath4,VideoFile4),1) %Save Videofile
 %         createVideoFile((Map4),fullfile(VideoPath5,VideoFile5),1) %Save Videofile
+        close(moviefile1);
+        close(moviefile2);
+        close(moviefile3);
+        close(moviefile4);
+        close(moviefile5);
         waitbar(1,h,sprintf('Processing Succeded!'))
 end
 
