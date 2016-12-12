@@ -280,11 +280,11 @@ switch singlemultiple
             IceConKM(i,:) = [PercentageKM(1),PercentageKM(2),PercentageKM(3)];
             IceFloeSize(i,:) = [PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
             
-            Panorama(:,:,1) = imresize(SPanorama,[NaN,1920]);
-            Map1(:,:,:) = uint8(imresize(Imap1,[NaN,1920]));
-            Map2(:,:,:) = uint8(imresize(Imap2,[NaN,1920]));
-            Map3(:,:,:) = uint8(imresize(Imap3,[NaN,1920]));
-            Map4(:,:,:) = uint8(imresize(Imap4,[NaN,1920]));
+            Panorama(:,:,1) = imresize(SPanorama,[1920,NaN]);
+            Map1(:,:,:) = uint8(imresize(Imap1,[1920,NaN]));
+            Map2(:,:,:) = uint8(imresize(Imap2,[1920,NaN]));
+            Map3(:,:,:) = uint8(imresize(Imap3,[1920,NaN]));
+            Map4(:,:,:) = uint8(imresize(Imap4,[1920,NaN]));
             
             % Write into VideoFiles
             writeVideo(moviefile1,Panorama);
