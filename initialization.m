@@ -93,12 +93,12 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     CamOrientation{4} = [+45 0 0];
 %     CamOrientation{5} = [+42 0 -90];
 %     CamOrientation{6} = [+42 0 -180];
-    CamOrientation{1} = [+42 0 180];
-    CamOrientation{2} = [+42 0 90];
-    CamOrientation{3} = [+42 0 0];
-    CamOrientation{4} = [42 0 0];
-    CamOrientation{5} = [42 0 -90];
-    CamOrientation{6} = [42 0 -180];
+    CamOrientation{1} = [+45 0 180];
+    CamOrientation{2} = [+45 0 90];
+    CamOrientation{3} = [+45 0 0];
+    CamOrientation{4} = [45 0 0];
+    CamOrientation{5} = [45 0 -90];
+    CamOrientation{6} = [45 0 -180];
 
     %% Set Case Orientations
     waitbar(0.25,h,sprintf('Setting Case Orientations...'))
@@ -130,8 +130,8 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
      n = 0;
      %CaseOrientation{1} = [-1.5 -1 1]; %RIGHT CAMERA MOUNT PARAMETERS
 %     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
-     CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
-     CaseOrientation{2} = [5 5 0]; %LEFT CAMERA MOUNT PARAMETERS
+     CaseOrientation{1} = [-1.5 -2 0]; %RIGHT CAMERA MOUNT PARAMETERS
+     CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
 
 
     
@@ -570,7 +570,7 @@ end
 
 %% Estimate geometric Transform for I2
 [T_align, matchedPoints1, matchedPoints2,status] = estimateGeometricTransform(matchedPoints1, matchedPoints2,...
-    'affine', 'Confidence', 75, 'MaxNumTrials', 1000, 'MaxDistance',25); %1.5 for right side
+    'affine', 'Confidence', 99, 'MaxNumTrials', 1000, 'MaxDistance',5); %1.5 for right side
 
 if status == 1
     fprintf('WARNING: No Matches found!\n');

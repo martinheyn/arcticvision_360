@@ -161,16 +161,16 @@ switch singlemultiple
         moviefile1 = VideoWriter(strcat(VideoPath1,'\',VideoFile1),'MPEG-4');
         moviefile1.FrameRate = 5;
         open(moviefile1);
-        moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2));
+        moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2),'MPEG-4');
         moviefile2.FrameRate = 5;
         open(moviefile2);
-        moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3));
+        moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3),'MPEG-4');
         moviefile3.FrameRate = 5;
         open(moviefile3);
-        moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4));
+        moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4),'MPEG-4');
         moviefile4.FrameRate = 5;
         open(moviefile4);
-        moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5));
+        moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5),'MPEG-4');
         moviefile5.FrameRate = 5;
         open(moviefile5);
 %         
