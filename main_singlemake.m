@@ -27,5 +27,5 @@ imageSets = imageSet(fullfile(path_inputimages_single));
 %imageSets = imageSet(path_inputimages_multi,'recursive');
  
 % Run MakePanorama function
-[IceConST,IceConKM,IceFloeDis] = makePanorama(imageSets,ship_masks,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
+[IceConST,IceConVT,IceConKM,IceFloeDis,Skymean] = makePanorama(imageSets,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
  

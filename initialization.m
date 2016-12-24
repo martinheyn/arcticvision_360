@@ -41,14 +41,14 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     %% Create Ship Masks 
     waitbar(0.1,h,sprintf('Masking out Ship...'))
 %      % Create them once (white should be sea surface)
-%      for i=1:6
-%      ship_masks{i} = zeros(size(I_calib{i})); % make rgb color mask
-%      ship_masks{i}(:,:,1) = double(roipoly(I_calib{i}));
-%      for j=1:3
-%      ship_masks{i}(:,:,j) = ship_masks{i}(:,:,1); % make rgb color mask
-%      end
-%      ship_masks{i} = logical(ship_masks{i});
-%      end
+     for i=1:6
+     ship_masks{i} = zeros(size(I_calib{i})); % make rgb color mask
+     ship_masks{i}(:,:,1) = double(roipoly(I_calib{i}));
+     for j=1:3
+     ship_masks{i}(:,:,j) = ship_masks{i}(:,:,1); % make rgb color mask
+     end
+     ship_masks{i} = logical(ship_masks{i});
+     end
      
 %     load shipmasks
      [path_output,file_output] = uigetfile(pwd,'Select shipmasks...');
