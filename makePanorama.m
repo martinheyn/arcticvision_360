@@ -139,11 +139,11 @@ switch singlemultiple
             th1 = 100;
             th2 = 130;
         elseif mean(skypixel) > 200
-            th1 = 75;
-            th2 = 155;
+            th1 = 80;
+            th2 = 150;
         else 
-            th1 = 100-(mean(skypixel)-100)*0.25;
-            th2 = 130+(mean(skypixel)-100)*0.25;
+            th1 = 100-(mean(skypixel)-100)*0.20;
+            th2 = 130+(mean(skypixel)-100)*0.20;
         end
          
         % Remove sky from Panorama
@@ -154,7 +154,7 @@ switch singlemultiple
         %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
         Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
                     
-        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
+        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,140,8,'ShowMessages','on','ShowImages','off');
         % Insert into Image
         Panorama = rgb2gray(insertText(Panorama,[1 100],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
           
@@ -204,6 +204,7 @@ switch singlemultiple
         %IceConKM = 0;
         %IceFloeSize = 0;
         
+        save(strcat(ImagePath1,imageSet.Description,'.mat'),'imageSet','IceConST','IceConVT','IceConKM','IceFloeSize','Skymean');
         
     case 0 % Multiple Frame Panorama
         
@@ -401,7 +402,7 @@ switch singlemultiple
            % IceConST(i,:) = 0;
            % IceConKM(i,:) = 0;
            % IceFloeSize(i,:) = 0;
-            
+           
             Imap1timestamp = insertText(uint8(Imap1),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
             Imap2timestamp = insertText(uint8(Imap2),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
             Imap3timestamp = insertText(uint8(Imap3),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
@@ -435,6 +436,8 @@ switch singlemultiple
             est_time = timedone/i*length(imageSet)-timedone;
             
         end
+        
+        save(strcat(VideoPath1,Videofile1,'.mat'),'IceConST','IceConVT','IceConKM','IceFloeSize','Skymean');
         waitbar(0.99/length(imageSet)*i,h,sprintf('Processing complete | Remaining time: %2.2f min\n Generating Video File...',0.08))
 %         createVideoFile(Panorama,fullfile(VideoPath1,VideoFile1),4) %Save Videofile
 %         createVideoFile((Map1),fullfile(VideoPath2,VideoFile2),4) %Save Videofile
@@ -1019,7 +1022,7 @@ function Outputs = icefloespecies(Img)
             [~, MSGID] = lastwarn();
             warning('off',MSGID);
 
-            Edges = edge(Img.data,'Roberts',16);%'zerocross',0.4);
+            Edges = edge(Img.data,'Roberts',16);%'zerocross',0.4); %16
         
             IceEdges = Edges.*ImaskIce1;
             iceblocksize = sum(ImaskIce1(:));
