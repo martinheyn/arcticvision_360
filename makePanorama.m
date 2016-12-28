@@ -410,13 +410,13 @@ switch singlemultiple
             Imap5timestamp = insertText(uint8(Imap5),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
             PrePanoramatimestamp = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
     
-            Panorama(:,:,:) = imresize(SPanorama,[1920,NaN]);
-            Map1(:,:,:) = imresize(Imap1timestamp,[1920,NaN]);
-            Map2(:,:,:) = imresize(Imap2timestamp,[1920,NaN]);
-            Map3(:,:,:) = imresize(Imap3timestamp,[1920,NaN]);
-            Map4(:,:,:) = imresize(Imap4timestamp,[1920,NaN]);
-            Map5(:,:,:) = imresize(Imap5timestamp,[1920,NaN]);
-            Panoramaraw(:,:,:) = imresize(PrePanoramatimestamp,[1920,NaN]);
+            Panorama(:,:,:) = imresize(SPanorama,[NaN,1080]);
+            Map1(:,:,:) = imresize(Imap1timestamp,[NaN,1080]);
+            Map2(:,:,:) = imresize(Imap2timestamp,[NaN,1080]);
+            Map3(:,:,:) = imresize(Imap3timestamp,[NaN,1080]);
+            Map4(:,:,:) = imresize(Imap4timestamp,[NaN,1080]);
+            Map5(:,:,:) = imresize(Imap5timestamp,[NaN,1080]);
+            Panoramaraw(:,:,:) = imresize(PrePanoramatimestamp,[NaN,1080]);
             
             % Write into VideoFiles
             writeVideo(moviefile1,Panorama);
