@@ -1022,7 +1022,7 @@ function Outputs = icefloespecies(Img)
             [~, MSGID] = lastwarn();
             warning('off',MSGID);
 
-            Edges = edge(Img.data,'Roberts',16);%'zerocross',0.4); %16
+            Edges = edge(Img.data,'Roberts',28);%'zerocross',0.4); %16
         
             IceEdges = Edges.*ImaskIce1;
             iceblocksize = sum(ImaskIce1(:));
