@@ -33,7 +33,8 @@ switch singlemultiple
         % First get the timestamp
         dateinnum = extract_date(imageSet);
         dateinvec = datevec(dateinnum);
-        timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+        %timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+        timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
         
         [ImageFile1,ImagePath1] = uiputfile(strcat(imageSet.Description,'.jpg')); % Get Directory for save Panorama file
         
@@ -62,7 +63,8 @@ switch singlemultiple
 
         % Read Images
         for j=1:6
-			k = -1*(-7+j);
+			%k = -1*(-7+j);
+            k = j;
             I{j} = read(imageSet, k);
         end
         waitbar(0.1,h,sprintf('Masking out Ship...'))
@@ -129,9 +131,12 @@ switch singlemultiple
         %[Imap1,PercentageST] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,4,'ShowMessages','on','ShowImages','off');
         
         % Pick from three subimages squares out of the sky
-        skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
-        skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
-        skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+%         skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
+%         skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
+%         skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+
+        skypixel = reshape(PrePanorama,[],1);
+        %Skymean = [dateinnum,mean(skypixel)];
         
         Skymean = [dateinnum,mean(skypixel)];
         
@@ -148,13 +153,13 @@ switch singlemultiple
          
         % Remove sky from Panorama
         % HACK HACK HACK
-        skymask = imresize(skymask,size(PrePanorama));
-        SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
-        
+        %skymask = imresize(skymask,size(PrePanorama));
+        %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+        SkyfreePanorama = PrePanorama;
         %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
         Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
                     
-        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,140,8,'ShowMessages','on','ShowImages','off');
+        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
         % Insert into Image
         Panorama = rgb2gray(insertText(Panorama,[1 100],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
           
@@ -268,8 +273,8 @@ switch singlemultiple
 
             % Read Images
             for j=1:6
-			    k = -1*(-7+j);
-                %k = j;
+			    %k = -1*(-7+j);
+                k = j;
                 I{j} = read(imageSet(set+i), k);
             end
             waitbar(0.1/length(imageSet)*i,h,sprintf('Processing Frame %i of %i | Remaining time: %2.2f min\n Masking out Ship...',i,length(imageSet),est_time/60))
@@ -342,12 +347,13 @@ switch singlemultiple
             PrePanorama =  imcrop(PrePanorama,rect);
             
             % Detect brightness by looking into the sky
-            skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
-            skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
-            skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
-        
+            %skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
+            %skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
+            %skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+            skypixel = reshape(PrePanorama,[],1);
+            
             Skymean(i,:) = [dateinnum,mean(skypixel)];
-                        
+            
             if mean(skypixel) < 100
                 th1 = 100;
                 th2 = 130;
@@ -362,8 +368,10 @@ switch singlemultiple
             
             % Remove sky from Panorama
             % HACK HACK HACK
-            skymask = imresize(skymask,size(PrePanorama));
-            SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+            skymask = logical(imresize(skymask,size(PrePanorama)));
+
+            %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+            SkyfreePanorama = PrePanorama;
         
             %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
             SPanorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
@@ -437,7 +445,7 @@ switch singlemultiple
             
         end
         
-        save(strcat(VideoPath1,Videofile1,'.mat'),'IceConST','IceConVT','IceConKM','IceFloeSize','Skymean');
+        save(strcat(VideoPath1,VideoFile1,'.mat'),'IceConST','IceConVT','IceConKM','IceFloeSize','Skymean');
         waitbar(0.99/length(imageSet)*i,h,sprintf('Processing complete | Remaining time: %2.2f min\n Generating Video File...',0.08))
 %         createVideoFile(Panorama,fullfile(VideoPath1,VideoFile1),4) %Save Videofile
 %         createVideoFile((Map1),fullfile(VideoPath2,VideoFile2),4) %Save Videofile
