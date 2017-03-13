@@ -139,16 +139,24 @@ switch singlemultiple
         %Skymean = [dateinnum,mean(skypixel)];
         
         Skymean = [dateinnum,mean(skypixel)];
-        
+        th01 = 60; %90
+        th02 = 90; %130
         if mean(skypixel) < 100
-            th1 = 100;
-            th2 = 130;
+            th1 = th01+10;
+            th2 = th02-10;
+            %th1 = 100;
+            %th2 = 130;
         elseif mean(skypixel) > 200
-            th1 = 80;
-            th2 = 150;
+            %th1 = 80;
+            %th2 = 150;
+            th1 = th01-10;
+            th2 = th01+10;
         else 
-            th1 = 100-(mean(skypixel)-100)*0.20;
-            th2 = 130+(mean(skypixel)-100)*0.20;
+            %th1 = 100-(mean(skypixel)-100)*0.20;
+            %th2 = 130+(mean(skypixel)-100)*0.20;
+            th1 = th01+10-(mean(skypixel)-100)*0.20;
+            th2 = th02-10+(mean(skypixel)-100)*0.20;
+            
         end
          
         % Remove sky from Panorama
@@ -159,7 +167,7 @@ switch singlemultiple
         %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
         Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
                     
-        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
+        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
         % Insert into Image
         Panorama = rgb2gray(insertText(Panorama,[1 100],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
           
@@ -168,14 +176,14 @@ switch singlemultiple
         Panorama = rgb2gray(insertText(Panorama,[1 200],sprintf('Ice-Water Concentration(VariableThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageVT(1),PercentageVT(2),PercentageVT(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
                 
         % Detect Ice Concentration Kmeans
-        [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,90,130,8,'ShowMessages','on','ShowImages','off');
+        [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
         % Insert into Image
         Panorama = rgb2gray(insertText(Panorama,[1 300],sprintf('Ice-Water Concentration(Kmeans): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
         
         
         waitbar(0.9,h,sprintf('Ice Floe Distribution Analysis...'))
         % Detect Ice Floe Distribution Map
-        [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',4,th1,th2,8,'ShowMessages','on','ShowImages','off');
+        [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',2,th01,th02,8,'ShowMessages','on','ShowImages','off');
         Imap4 = Imaptemp{1};
         Imap5 = Imaptemp{2}; % Edge detection comes free here, saves time
         % Insert into Image
@@ -266,7 +274,8 @@ switch singlemultiple
             
             dateinnum = extract_date(imageSet(i));
             dateinvec = datevec(dateinnum);
-            timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+            %timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+            timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
     
             % Preallocate Variables to improve Speed
             I = cell(1,6);
@@ -350,22 +359,31 @@ switch singlemultiple
             %skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
             %skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
             %skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
-            skypixel = reshape(PrePanorama,[],1);
-            
-            Skymean(i,:) = [dateinnum,mean(skypixel)];
-            
+                    skypixel = reshape(PrePanorama,[],1);
+              %Skymean = [dateinnum,mean(skypixel)];
+        
+            Skymean = [dateinnum,mean(skypixel)];
+            th01 = 60; %90
+            th02 = 90; %130
             if mean(skypixel) < 100
-                th1 = 100;
-                th2 = 130;
+                th1 = th01+10;
+               th2 = th02-10;
+                %th1 = 100;
+                %th2 = 130;
             elseif mean(skypixel) > 200
-                th1 = 75;
-                th2 = 155;
+                %th1 = 80;
+                %th2 = 150;
+                th1 = th01-10;
+                th2 = th01+10;
             else 
-                th1 = 100-(mean(skypixel)-100)*0.25;
-                th2 = 130+(mean(skypixel)-100)*0.25;
+                %th1 = 100-(mean(skypixel)-100)*0.20;
+                %th2 = 130+(mean(skypixel)-100)*0.20;
+                th1 = th01+10-(mean(skypixel)-100)*0.20;
+                th2 = th02-10+(mean(skypixel)-100)*0.20;
+
             end
-            %SPanorama = PrePanorama;
-            
+                %SPanorama = PrePanorama;
+
             % Remove sky from Panorama
             % HACK HACK HACK
             skymask = logical(imresize(skymask,size(PrePanorama)));
@@ -378,7 +396,7 @@ switch singlemultiple
 
             
             % Detect Ice Concentration Simple Thres
-            [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,90,130,8,'ShowMessages','on','ShowImages','off');
+            [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
             % Insert into Image
             SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-400],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
             
@@ -387,13 +405,13 @@ switch singlemultiple
             SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-300],sprintf('Ice-Water Concentration(VariableThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageVT(1),PercentageVT(2),PercentageVT(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
     
             % Detect Ice Concentration KMeans
-            [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,90,130,8,'ShowMessages','on','ShowImages','off');
+            [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
             % Insert into Image
             SPanorama = rgb2gray(insertText(SPanorama,[1 size(PrePanorama,1)-200],sprintf('Ice-Water Concentration(Kmean): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
             waitbar(0.9/length(imageSet)*i,h,sprintf('Processing Frame %i of %i | Remaining time: %2.2f min\n Ice Floe Distribution Analysis...',i,length(imageSet),est_time/60))
             
             % Detect Ice Floe Distribution Map
-            [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',4,th1,th2,8,'ShowMessages','on','ShowImages','off');
+            [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',2,th01,th02,8,'ShowMessages','on','ShowImages','off');
             Imap4 = Imaptemp{1};
             Imap5 = Imaptemp{2};
             
@@ -1030,7 +1048,7 @@ function Outputs = icefloespecies(Img)
             [~, MSGID] = lastwarn();
             warning('off',MSGID);
 
-            Edges = edge(Img.data,'Roberts',28);%'zerocross',0.4); %16
+            Edges = edge(Img.data,'Roberts',20);%'zerocross',0.4); %16 %28
         
             IceEdges = Edges.*ImaskIce1;
             iceblocksize = sum(ImaskIce1(:));
