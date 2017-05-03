@@ -1,4 +1,4 @@
-function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
+function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama_OATRC2015(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MakePanorama Function
 % Inputs: 
@@ -33,8 +33,8 @@ switch singlemultiple
         % First get the timestamp
         dateinnum = extract_date(imageSet);
         dateinvec = datevec(dateinnum);
-        %timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
-        timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+        timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+        %timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(%dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
         
         [ImageFile1,ImagePath1] = uiputfile(strcat(imageSet.Description,'.jpg')); % Get Directory for save Panorama file
         
@@ -242,27 +242,35 @@ switch singlemultiple
         
         moviefile1 = VideoWriter(strcat(VideoPath1,'\',VideoFile1),'MPEG-4');
         moviefile1.FrameRate = 5;
+        moviefile1.Quality = 100;
         open(moviefile1);
         moviefile2 = VideoWriter(strcat(VideoPath2,'\',VideoFile2),'MPEG-4');
         moviefile2.FrameRate = 5;
+        moviefile2.Quality = 100;
         open(moviefile2);
         moviefile3 = VideoWriter(strcat(VideoPath3,'\',VideoFile3),'MPEG-4');
         moviefile3.FrameRate = 5;
+        moviefile3.Quality = 100;
         open(moviefile3);
         moviefile4 = VideoWriter(strcat(VideoPath4,'\',VideoFile4),'MPEG-4');
         moviefile4.FrameRate = 5;
+        moviefile4.Quality = 100;
         open(moviefile4);
         moviefile5 = VideoWriter(strcat(VideoPath5,'\',VideoFile5),'MPEG-4');
         moviefile5.FrameRate = 5;
+        moviefile5.Quality = 100;
         open(moviefile5);
         moviefile6 = VideoWriter(strcat(VideoPath6,'\',VideoFile6),'MPEG-4');
         moviefile6.FrameRate = 5;
+        moviefile6.Quality = 100;
         open(moviefile6);
         moviefile7 = VideoWriter(strcat(VideoPath7,'\',VideoFile7),'MPEG-4');
         moviefile7.FrameRate = 5;
+        moviefile7.Quality = 100;
         open(moviefile7);
         moviefile8 = VideoWriter(strcat(VideoPath8,'\',VideoFile8),'MPEG-4');
         moviefile8.FrameRate = 5;
+        moviefile8.Quality = 100;
         open(moviefile8);
 %         
         timedone=0;
@@ -274,8 +282,8 @@ switch singlemultiple
             
             dateinnum = extract_date(imageSet(i));
             dateinvec = datevec(dateinnum);
-            %timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
-            timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+            timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+            %timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
     
             % Preallocate Variables to improve Speed
             I = cell(1,6);
@@ -356,15 +364,15 @@ switch singlemultiple
             PrePanorama =  imcrop(PrePanorama,rect);
             
             % Detect brightness by looking into the sky
-            skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
-            skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
-            skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
-        %   skypixel = reshape(PrePanorama,[],1);
-            %Skymean = [dateinnum,mean(skypixel)];
+            %skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
+            %skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
+            %skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+                    skypixel = reshape(PrePanorama,[],1);
+              %Skymean = [dateinnum,mean(skypixel)];
         
             Skymean = [dateinnum,mean(skypixel)];
-            th01 = 90; %90
-            th02 = 130; %130
+            th01 = 60; %90
+            th02 = 90; %130
             if mean(skypixel) < 100
                 th1 = th01+10;
                th2 = th02-10;
@@ -436,13 +444,13 @@ switch singlemultiple
             Imap5timestamp = insertText(uint8(Imap5),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
             PrePanoramatimestamp = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
     
-            Panorama(:,:,:) = imresize(SPanorama,[NaN,1080]);
-            Map1(:,:,:) = imresize(Imap1timestamp,[NaN,1080]);
-            Map2(:,:,:) = imresize(Imap2timestamp,[NaN,1080]);
-            Map3(:,:,:) = imresize(Imap3timestamp,[NaN,1080]);
-            Map4(:,:,:) = imresize(Imap4timestamp,[NaN,1080]);
-            Map5(:,:,:) = imresize(Imap5timestamp,[NaN,1080]);
-            Panoramaraw(:,:,:) = imresize(PrePanoramatimestamp,[NaN,1080]);
+            Panorama(:,:,:) = imresize(SPanorama,[NaN,720]);
+            Map1(:,:,:) = imresize(Imap1timestamp,[NaN,720]);
+            Map2(:,:,:) = imresize(Imap2timestamp,[NaN,720]);
+            Map3(:,:,:) = imresize(Imap3timestamp,[NaN,720]);
+            Map4(:,:,:) = imresize(Imap4timestamp,[NaN,720]);
+            Map5(:,:,:) = imresize(Imap5timestamp,[NaN,720]);
+            Panoramaraw(:,:,:) = imresize(PrePanoramatimestamp,[NaN,720]);
             
             % Write into VideoFiles
             writeVideo(moviefile1,Panorama);
