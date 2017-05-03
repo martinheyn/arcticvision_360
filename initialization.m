@@ -41,14 +41,14 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     %% Create Ship Masks 
     waitbar(0.1,h,sprintf('Masking out Ship...'))
 %      % Create them once (white should be sea surface)
-     for i=1:6
-     ship_masks{i} = zeros(size(I_calib{i})); % make rgb color mask
-     ship_masks{i}(:,:,1) = double(roipoly(I_calib{i}));
-     for j=1:3
-     ship_masks{i}(:,:,j) = ship_masks{i}(:,:,1); % make rgb color mask
-     end
-     ship_masks{i} = logical(ship_masks{i});
-     end
+%      for i=1:6
+%      ship_masks{i} = zeros(size(I_calib{i})); % make rgb color mask
+%      ship_masks{i}(:,:,1) = double(roipoly(I_calib{i}));
+%      for j=1:3
+%      ship_masks{i}(:,:,j) = ship_masks{i}(:,:,1); % make rgb color mask
+%      end
+%      ship_masks{i} = logical(ship_masks{i});
+%      end
      
 %     load shipmasks
      [path_output,file_output] = uigetfile(pwd,'Select shipmasks...');
@@ -178,11 +178,11 @@ matchedPoints5b=[3712,6664;4110,6313;4475,5860;4641,5543;5135,5561;5382,5646;539
 matchedPoints6=[2578,2002;2869,1641;3103,1204;3176,886;3692,815;3923,827;3960,985;4008,681;4187,438;4075,289;3990,195;3832,198;3659,56;3501,220];
 
     T_align{1} = affine2d(eye(3,3));
-    [T_align{2},pixel_loc{1}{1},pixel_loc{1}{2}] = estimate_translation_inject(I_orthorectified{1},I_orthorectified{2},matchedPoints1,matchedPoints2a,'ShowMessages','on','ShowImages','off');
-    [T_align{3},pixel_loc{2}{2},pixel_loc{2}{3}] = estimate_translation_inject(I_orthorectified{2},I_orthorectified{3},matchedPoints2b,matchedPoints3a,'ShowMessages','on','ShowImages','off');
-    [T_align{4},pixel_loc{3}{3},pixel_loc{3}{4}] = estimate_translation_inject(I_orthorectified{3},I_orthorectified{4},matchedPoints3b,matchedPoints4a,'ShowMessages','on','ShowImages','off');
-    [T_align{5},pixel_loc{4}{4},pixel_loc{4}{5}] = estimate_translation_inject(I_orthorectified{4},I_orthorectified{5},matchedPoints4b,matchedPoints5a,'ShowMessages','on','ShowImages','off');
-    [T_align{6},pixel_loc{5}{5},pixel_loc{5}{6}] = estimate_translation_inject(I_orthorectified{5},I_orthorectified{6},matchedPoints5b,matchedPoints6,'ShowMessages','on','ShowImages','off');
+    [T_align{2},pixel_loc{1}{1},pixel_loc{1}{2}] = estimate_translation_inject(I_orthorectified{1},I_orthorectified{2},matchedPoints1,matchedPoints2a,'ShowMessages','on','ShowImages','on');
+    [T_align{3},pixel_loc{2}{2},pixel_loc{2}{3}] = estimate_translation_inject(I_orthorectified{2},I_orthorectified{3},matchedPoints2b,matchedPoints3a,'ShowMessages','on','ShowImages','on');
+    [T_align{4},pixel_loc{3}{3},pixel_loc{3}{4}] = estimate_translation_inject(I_orthorectified{3},I_orthorectified{4},matchedPoints3b,matchedPoints4a,'ShowMessages','on','ShowImages','on');
+    [T_align{5},pixel_loc{4}{4},pixel_loc{4}{5}] = estimate_translation_inject(I_orthorectified{4},I_orthorectified{5},matchedPoints4b,matchedPoints5a,'ShowMessages','on','ShowImages','on');
+    [T_align{6},pixel_loc{5}{5},pixel_loc{5}{6}] = estimate_translation_inject(I_orthorectified{5},I_orthorectified{6},matchedPoints5b,matchedPoints6,'ShowMessages','on','ShowImages','on');
 
 
 %     

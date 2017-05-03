@@ -27,5 +27,5 @@ save(fullfile(path_output,'initialization_outputs_new99.mat'));
 % imageSets = imageSet(path_inputimages_multi,'recursive');
 %  
 % % Run MakePanorama function
-[IceConST,IceConKM,IceFloeDis] = makePanorama(imageSets,ship_masks,0,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
+%[IceConST,IceConKM,IceFloeDis] = makePanorama(imageSets,ship_masks,0,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
 %  
