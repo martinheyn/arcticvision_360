@@ -356,11 +356,11 @@ switch singlemultiple
             PrePanorama =  imcrop(PrePanorama,rect);
             
             % Detect brightness by looking into the sky
-            %skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
-            %skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
-            %skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
-                    skypixel = reshape(PrePanorama,[],1);
-              %Skymean = [dateinnum,mean(skypixel)];
+            skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
+            skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
+            skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+                   % skypixel = reshape(PrePanorama,[],1);
+            %Skymean = [dateinnum,mean(skypixel)];
         
             Skymean = [dateinnum,mean(skypixel)];
             th01 = 60; %90
