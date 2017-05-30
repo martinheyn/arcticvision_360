@@ -1,4 +1,4 @@
-function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
+function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama_AO16(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MakePanorama Function
 % Inputs: 
@@ -63,8 +63,8 @@ switch singlemultiple
 
         % Read Images
         for j=1:6
-			%k = -1*(-7+j);
-            k = j;
+			k = -1*(-7+j);
+            %k = j;
             I{j} = read(imageSet, k);
         end
         waitbar(0.1,h,sprintf('Masking out Ship...'))
@@ -131,11 +131,11 @@ switch singlemultiple
         %[Imap1,PercentageST] = ice_detection(PrePanorama,'SimpleThreshold',1,90,130,4,'ShowMessages','on','ShowImages','off');
         
         % Pick from three subimages squares out of the sky
-%         skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
-%         skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
-%         skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
+         skypixel = reshape(PrePanorama([390:546],[1816:2056]),[],1);
+         skypixel = [skypixel;reshape(PrePanorama([228:318],[2506:2626]),[],1)];
+         skypixel = [skypixel;reshape(PrePanorama([564:636],[5032:5110]),[],1)];
 
-        skypixel = reshape(PrePanorama,[],1);
+        %skypixel = reshape(PrePanorama,[],1);
         %Skymean = [dateinnum,mean(skypixel)];
         
         Skymean = [dateinnum,mean(skypixel)];
@@ -282,8 +282,8 @@ switch singlemultiple
 
             % Read Images
             for j=1:6
-			    %k = -1*(-7+j);
-                k = j;
+			    k = -1*(-7+j);
+                %k = j;
                 I{j} = read(imageSet(set+i), k);
             end
             waitbar(0.1/length(imageSet)*i,h,sprintf('Processing Frame %i of %i | Remaining time: %2.2f min\n Masking out Ship...',i,length(imageSet),est_time/60))
