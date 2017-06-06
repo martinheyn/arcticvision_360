@@ -132,8 +132,6 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
 %     CaseOrientation{2} = [1.5 1 0]; %LEFT CAMERA MOUNT PARAMETERS
      CaseOrientation{1} = [-1.5 -2 0]; %RIGHT CAMERA MOUNT PARAMETERS
      CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
-     %CaseOrientation{1} = [0 0 0]; %RIGHT CAMERA MOUNT PARAMETERS
-     %CaseOrientation{2} = [0 0 0]; %LEFT CAMERA MOUNT PARAMETERS
 
 
     
@@ -149,17 +147,16 @@ function [ship_masks,cameraParams,T_ortho,T_align,imageView,panoView,pixel_loc,b
     waitbar(0.5,h,sprintf('Rectify images...'))
     for i=1:6
     I_orthorectified{i} = imwarp(I_lenscorrected{i},T_ortho{i},'linear','OutputView',imageView{i},'Fill',0,'SmoothEdges',true);
-    imshow(I_orthorectified{i})
     end
     
     %% Find features in images
-    [Feature{1},Points{1}] = detectfeatures(I_orthorectified{1},'ShowMessages','on','ShowImages','off');
-    [Feature{2},Points{2}] = detectfeatures(I_orthorectified{2},'ShowMessages','on','ShowImages','off');
-    [Feature{3},Points{3}] = detectfeatures(I_orthorectified{3},'ShowMessages','on','ShowImages','off');
-    [Feature{4},Points{4}] = detectfeatures(I_orthorectified{4},'ShowMessages','on','ShowImages','off');
-    [Feature{5},Points{5}] = detectfeatures(I_orthorectified{5},'ShowMessages','on','ShowImages','off');
-    [Feature{6},Points{6}] = detectfeatures(I_orthorectified{6},'ShowMessages','on','ShowImages','off');
- 
+%     [Feature{1},Points{1}] = detectfeatures(I_orthorectified{1},'ShowMessages','on','ShowImages','on');
+%     [Feature{2},Points{2}] = detectfeatures(I_orthorectified{2},'ShowMessages','on','ShowImages','on');
+%     [Feature{3},Points{3}] = detectfeatures(I_orthorectified{3},'ShowMessages','on','ShowImages','on');
+%     [Feature{4},Points{4}] = detectfeatures(I_orthorectified{4},'ShowMessages','on','ShowImages','on');
+%     [Feature{5},Points{5}] = detectfeatures(I_orthorectified{5},'ShowMessages','on','ShowImages','on');
+%     [Feature{6},Points{6}] = detectfeatures(I_orthorectified{6},'ShowMessages','on','ShowImages','on');
+%  
     %% Estimate T_align with feature detection and matching
     waitbar(0.55,h,sprintf('Estimate T-align and pixel_loc...'))
     T_align{1} = affine2d(eye(3,3));

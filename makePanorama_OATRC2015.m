@@ -33,7 +33,7 @@ switch singlemultiple
         % First get the timestamp
         dateinnum = extract_date(imageSet);
         dateinvec = datevec(dateinnum);
-        timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+        timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
         %timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(%dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
         
         [ImageFile1,ImagePath1] = uiputfile(strcat(imageSet.Description,'.jpg')); % Get Directory for save Panorama file
@@ -282,7 +282,7 @@ switch singlemultiple
             
             dateinnum = extract_date(imageSet(i));
             dateinvec = datevec(dateinnum);
-            timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
+            timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
             %timestamp = strcat('OATRC 2015 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
     
             % Preallocate Variables to improve Speed
