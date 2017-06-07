@@ -1,4 +1,4 @@
-function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama_AO16(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
+function [IceConST,IceConVT,IceConKM,IceFloeSize,Skymean] = makePanorama_AO16_sides(imageSet,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MakePanorama Function
 % Inputs: 
@@ -139,8 +139,8 @@ switch singlemultiple
         %Skymean = [dateinnum,mean(skypixel)];
         
         Skymean = [dateinnum,mean(skypixel)];
-        th01 = 60; %90
-        th02 = 90; %130
+        th01 = 90; %90
+        th02 = 130; %130
         if mean(skypixel) < 100
             th1 = th01+10;
             th2 = th02-10;
@@ -161,62 +161,88 @@ switch singlemultiple
          
         % Remove sky from Panorama
         % HACK HACK HACK
-        %skymask = imresize(skymask,size(PrePanorama));
-        %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
-        SkyfreePanorama = PrePanorama;
+        skymask = imresize(skymask,size(PrePanorama));
+        SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+        %SkyfreePanorama = PrePanorama;
+        TempPano = SkyfreePanorama;
         
-        %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
-        Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
-                    
-        [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
-        % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 100],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
-          
-        [Imap2,PercentageVT] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th1,th2,8,'ShowMessages','on','ShowImages','off');
-        % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 200],sprintf('Ice-Water Concentration(VariableThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageVT(1),PercentageVT(2),PercentageVT(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
-                
-        % Detect Ice Concentration Kmeans
-        [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
-        % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 300],sprintf('Ice-Water Concentration(Kmeans): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
-        
-        
-        waitbar(0.9,h,sprintf('Ice Floe Distribution Analysis...'))
-        % Detect Ice Floe Distribution Map
-        [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',2,th01,th02,8,'ShowMessages','on','ShowImages','off');
-        Imap4 = Imaptemp{1};
-        Imap5 = Imaptemp{2}; % Edge detection comes free here, saves time
-        % Insert into Image
-        Panorama = rgb2gray(insertText(Panorama,[1 400],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)),'FontSize',48,'TextColor','black','BoxColor','white'));
-        % Detect Ice Floe Distribution Edges
-        %[Imap5,~] = ice_detection(PrePanorama,'Edges',4,90,110,2,'ShowMessages','on','ShowImages','off');
-        % Insert into Image
+        for l = 1:1:4
+        clear SkyfreePanorama;
+            switch l
+                case 1
+                    side = 'port';
+                    Temp = TempPano(1083:3934,1491:3740);
+                    Temp2 = imrotate(Temp,25);
+                    SkyfreePanorama = Temp2(300:3043,1430:2185);
+                case 2
+                    side = 'starboard';        
+                    Temp = TempPano(1083:3934,3740:5989);
+                    Temp2 = imrotate(Temp,-20);
+                    SkyfreePanorama = Temp2(306:2693,854:1709);
+                    clear Temp Temp2
+                case 3
+                    side = 'ahead';
+                    SkyfreePanorama = TempPano(861:1807,2720:4885);
+                case 4
+                    side = 'complete';
+                    SkyfreePanorama = TempPano;
+            end
+            
+            PrePanorama = SkyfreePanorama;
+            %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
+            Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
 
-        Imap1timestamp = insertText(uint8(Imap1),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
-        Imap2timestamp = insertText(uint8(Imap2),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
-        Imap3timestamp = insertText(uint8(Imap3),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
-        Imap4timestamp = insertText(uint8(Imap4),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
-        Imap5timestamp = insertText(uint8(Imap5),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
-        PrePanoramatimestamp = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
-        
-        imwrite(Panorama,fullfile(ImagePath1,ImageFile1));
-        imwrite(Imap1timestamp,fullfile(ImagePath2,ImageFile2));
-        imwrite(Imap2timestamp,fullfile(ImagePath3,ImageFile3));
-        imwrite(Imap3timestamp,fullfile(ImagePath4,ImageFile4));
-        imwrite(Imap4timestamp,fullfile(ImagePath5,ImageFile5));
-        imwrite(Imap5timestamp,fullfile(ImagePath6,ImageFile6));
-        imwrite(PrePanoramatimestamp,fullfile(ImagePath7,ImageFile7));
-        
-        waitbar(1,h,sprintf('Processing Succeded!'))
-        
-        IceConST = [dateinnum,PercentageST(1),PercentageST(2),PercentageST(3)];
-        IceConVT = [dateinnum,PercentageVT(1),PercentageVT(2),PercentageVT(3)];
-        IceConKM = [dateinnum,PercentageKM(1),PercentageKM(2),PercentageKM(3)];
-        IceFloeSize = [dateinnum,PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
-        %IceConST = 0;
-        %IceConKM = 0;
-        %IceFloeSize = 0;
+            [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
+            % Insert into Image
+            Panorama = rgb2gray(insertText(Panorama,[1 100],sprintf('Ice-Water Concentration(SimpleThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageST(1),PercentageST(2),PercentageST(3)),'FontSize',16,'TextColor','black','BoxColor','white'));
+
+            [Imap2,PercentageVT] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th1,th2,8,'ShowMessages','on','ShowImages','off');
+            % Insert into Image
+            Panorama = rgb2gray(insertText(Panorama,[1 200],sprintf('Ice-Water Concentration(VariableThreshold): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageVT(1),PercentageVT(2),PercentageVT(3)),'FontSize',16,'TextColor','black','BoxColor','white'));
+
+            % Detect Ice Concentration Kmeans
+            [Imap3,PercentageKM] = ice_detection(SkyfreePanorama,'KmeansAlgorithm',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
+            % Insert into Image
+            Panorama = rgb2gray(insertText(Panorama,[1 300],sprintf('Ice-Water Concentration(Kmeans): Ice: %2.2f%% Dark Ice: %2.2f%% Water: %2.2f%%',PercentageKM(1),PercentageKM(2),PercentageKM(3)),'FontSize',16,'TextColor','black','BoxColor','white'));
+
+
+            waitbar(0.9,h,sprintf('Ice Floe Distribution Analysis...'))
+            % Detect Ice Floe Distribution Map
+            [Imaptemp,PercentageFloeDis] = ice_detection(SkyfreePanorama,'FloeDistAlgorithm',2,th01,th02,8,'ShowMessages','on','ShowImages','off');
+            Imap4 = Imaptemp{1};
+            Imap5 = Imaptemp{2}; % Edge detection comes free here, saves time
+            % Insert into Image
+            Panorama = rgb2gray(insertText(Panorama,[1 400],sprintf('Floe Size Distribution: Small: %2.2f%% Medium: %2.2f%% Large: %2.2f%%',PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)),'FontSize',16,'TextColor','black','BoxColor','white'));
+            % Detect Ice Floe Distribution Edges
+            %[Imap5,~] = ice_detection(PrePanorama,'Edges',4,90,110,2,'ShowMessages','on','ShowImages','off');
+            % Insert into Image
+
+            Imap1timestamp = insertText(uint8(Imap1),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
+            Imap2timestamp = insertText(uint8(Imap2),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
+            Imap3timestamp = insertText(uint8(Imap3),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white');
+            Imap4timestamp = insertText(uint8(Imap4),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
+            Imap5timestamp = insertText(uint8(Imap5),[1,1],timestamp,'AnchorPoint','LeftTop','FontSize',14,'TextColor','black','BoxColor','white');
+            PrePanoramatimestamp = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
+
+            imwrite(Panorama,fullfile(ImagePath1,ImageFile1));
+            imwrite(Imap1timestamp,fullfile(ImagePath2,strcat(side,ImageFile2)));
+            imwrite(Imap2timestamp,fullfile(ImagePath3,strcat(side,ImageFile3)));
+            imwrite(Imap3timestamp,fullfile(ImagePath4,strcat(side,ImageFile4)));
+            imwrite(Imap4timestamp,fullfile(ImagePath5,strcat(side,ImageFile5)));
+            imwrite(Imap5timestamp,fullfile(ImagePath6,strcat(side,ImageFile6)));
+            imwrite(PrePanoramatimestamp,fullfile(ImagePath7,strcat(side,ImageFile7)));
+
+            waitbar(1,h,sprintf('Processing Succeded!'))
+
+            IceConST.(side) = [dateinnum,PercentageST(1),PercentageST(2),PercentageST(3)];
+            IceConVT.(side) = [dateinnum,PercentageVT(1),PercentageVT(2),PercentageVT(3)];
+            IceConKM.(side) = [dateinnum,PercentageKM(1),PercentageKM(2),PercentageKM(3)];
+            IceFloeSize.(side) = [dateinnum,PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
+            %IceConST = 0;
+            %IceConKM = 0;
+            %IceFloeSize = 0;
+            clear Panorama Imap1 Imap2 Imap3 Imap4 Imap5 Imaptemp
+        end
         
         save(strcat(ImagePath1,imageSet.Description,'.mat'),'imageSet','IceConST','IceConVT','IceConKM','IceFloeSize','Skymean');
         
@@ -336,6 +362,9 @@ switch singlemultiple
 
             % Function Output
             PrePanorama = I{5};
+            RotPanorama = imrotate(PrePanorama,28);
+            clear PrePanorama
+            PrePanorama = RotPanorama;
 
             % Crop Image and make Space for IceAnalysis Results
             if i==1 % Only do it in the first loop to improve speed
