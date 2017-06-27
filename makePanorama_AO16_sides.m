@@ -164,7 +164,7 @@ switch singlemultiple
         skymask = imresize(skymask,size(PrePanorama));
         SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
         %SkyfreePanorama = PrePanorama;
-        TempPano = SkyfreePanorama;
+        TempPano = imresize(SkyfreePanorama,[3935 6489]);
         
         for l = 1:1:4
         clear SkyfreePanorama;

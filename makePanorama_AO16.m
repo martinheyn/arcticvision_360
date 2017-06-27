@@ -161,9 +161,10 @@ switch singlemultiple
          
         % Remove sky from Panorama
         % HACK HACK HACK
-        %skymask = imresize(skymask,size(PrePanorama));
-        %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
-        SkyfreePanorama = PrePanorama;
+        skymask = imresize(skymask,size(PrePanorama));
+        
+        SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+        %SkyfreePanorama = PrePanorama;
         
         %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
         Panorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
@@ -336,6 +337,11 @@ switch singlemultiple
 
             % Function Output
             PrePanorama = I{5};
+                    
+            RotPanorama = imrotate(PrePanorama,28);
+            %CropPanorama = RotPanorama(1699:5623,1142:7625);
+            clear PrePanorama
+            PrePanorama = RotPanorama;
 
             % Crop Image and make Space for IceAnalysis Results
             if i==1 % Only do it in the first loop to improve speed
@@ -389,8 +395,8 @@ switch singlemultiple
             % HACK HACK HACK
             skymask = logical(imresize(skymask,size(PrePanorama)));
 
-            %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
-            SkyfreePanorama = PrePanorama;
+            SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
+            %SkyfreePanorama = PrePanorama;
         
             %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
             SPanorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
