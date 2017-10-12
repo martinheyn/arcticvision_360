@@ -27,6 +27,6 @@ path_inputimages_multi = uigetdir(pwd,'Select directory for input multiple image
 imageSets = imageSet(path_inputimages_multi,'recursive');
  
 % Run MakePanorama function
-[IceConST,IceConVT,IceConKM,IceFloeDis,Skymean] = makePanorama_AO16(imageSets,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
+[IceConST,IceConVT,IceConKM,IceFloeDis,Skymean] = makePanorama_AO16_sides(imageSets,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
 % [IceConST,IceConVT,IceConKM,IceFloeDis,Skymean] = makePanorama_OATRC2015(imageSets,ship_masks,skymask,cameraParams,T_ortho,imageView,T_align,panoView,blending_masks,pixel_loc);
  

@@ -249,7 +249,24 @@ switch singlemultiple
     case 0 % Multiple Frame Panorama
         
         [VideoFile1,VideoPath1] = uiputfile(); % Get Directory for save Videofile Panorama
-        VideoFile1 = strrep(VideoFile1,'.rpt','');
+        
+        for m = 3:1:4
+            
+            switch m
+                case 1
+                    side = 'port';
+                   
+                case 2
+                    side = 'starboard';        
+                    
+                case 3
+                    side = 'ahead';
+                   
+                case 4
+                    side = 'complete';
+            end
+            
+        VideoFile1 = strrep(strcat(VideoFile1,side),'.rpt','');
         
         VideoPath2 = VideoPath1;
         VideoPath3 = VideoPath2;
@@ -420,10 +437,34 @@ switch singlemultiple
 
             %SkyfreePanorama = masking_sky(PrePanorama,skymask,'ShowMessages','on','ShowImages','off');
             SkyfreePanorama = PrePanorama;
+            TempPano = imresize(SkyfreePanorama,[3935 6489]);
         
+            clear SkyfreePanorama;
+                switch m
+                    case 1
+                        side = 'port';
+                        Temp = TempPano(1083:3934,1491:3740);
+                        Temp2 = imrotate(Temp,25);
+                        SkyfreePanorama = Temp2(300:3043,1430:2185);
+                    case 2
+                        side = 'starboard';        
+                        Temp = TempPano(1083:3934,3740:5989);
+                        Temp2 = imrotate(Temp,-20);
+                        SkyfreePanorama = Temp2(306:2693,854:1709);
+                        clear Temp Temp2
+                    case 3
+                        side = 'ahead';
+                        SkyfreePanorama = TempPano(861:1807,2720:4885);
+                    case 4
+                        side = 'complete';
+                        SkyfreePanorama = TempPano;
+                end
+            
             %PrePanorama = [zeros(35,size(PrePanorama,2)); PrePanorama; zeros(500,size(PrePanorama,2))];
+            PrePanorama = SkyfreePanorama;
+            
             SPanorama = rgb2gray(insertText(PrePanorama,[1 1],timestamp,'AnchorPoint','LeftTop','FontSize',48,'TextColor','black','BoxColor','white'));
-
+            
             
             % Detect Ice Concentration Simple Thres
             [Imap1,PercentageST] = ice_detection(SkyfreePanorama,'SimpleThreshold',1,th01,th02,8,'ShowMessages','on','ShowImages','off');
@@ -451,10 +492,10 @@ switch singlemultiple
             %[Imap5,~] = ice_detection(PrePanorama,'Edges',4,90,110,32,'ShowMessages','on','ShowImages','off');
            
 
-            IceConST(i,:) = [dateinnum,PercentageST(1),PercentageST(2),PercentageST(3)];
-            IceConVT(i,:) = [dateinnum,PercentageVT(1),PercentageVT(2),PercentageVT(3)];
-            IceConKM(i,:) = [dateinnum,PercentageKM(1),PercentageKM(2),PercentageKM(3)];
-            IceFloeSize(i,:) = [dateinnum,PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
+            IceConST.(side)(i,:) = [dateinnum,PercentageST(1),PercentageST(2),PercentageST(3)];
+            IceConVT.(side)(i,:) = [dateinnum,PercentageVT(1),PercentageVT(2),PercentageVT(3)];
+            IceConKM.(side)(i,:) = [dateinnum,PercentageKM(1),PercentageKM(2),PercentageKM(3)];
+            IceFloeSize.(side)(i,:) = [dateinnum,PercentageFloeDis(1),PercentageFloeDis(2),PercentageFloeDis(3)];
            % IceConST(i,:) = 0;
            % IceConKM(i,:) = 0;
            % IceFloeSize(i,:) = 0;
@@ -500,7 +541,7 @@ switch singlemultiple
 %         createVideoFile((Map2),fullfile(VideoPath3,VideoFile3),4) %Save Videofile
 %         createVideoFile((Map3),fullfile(VideoPath4,VideoFile4),1) %Save Videofile
 %         createVideoFile((Map4),fullfile(VideoPath5,VideoFile5),1) %Save Videofile
-        close(moviefile1);
+         close(moviefile1);
          close(moviefile2);
          close(moviefile3);
          close(moviefile4);
@@ -508,6 +549,8 @@ switch singlemultiple
          close(moviefile6);
          close(moviefile7);
         waitbar(1,h,sprintf('Processing Succeded!'))
+        end
+
 end
 
 end
