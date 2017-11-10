@@ -316,6 +316,7 @@ switch singlemultiple
         for i=1:length(imageSet)
             tic
             
+            try
             dateinnum = extract_date(imageSet(i));
             dateinvec = datevec(dateinnum);
             timestamp = strcat('Arctic Ocean 2016 =>',num2str(dateinvec(1)),'.',num2str(dateinvec(2)),'.',num2str(dateinvec(3)),'_',num2str(dateinvec(4)),':',num2str(dateinvec(5)),':',num2str(dateinvec(6)),'<='); 
@@ -531,6 +532,10 @@ switch singlemultiple
             time = toc;
             timedone = timedone+time;
             est_time = timedone/i*length(imageSet)-timedone;
+            
+            catch
+                fprintf('Error, cannot read that file\n')
+            end
             
         end
         
