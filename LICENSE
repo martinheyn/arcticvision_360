@@ -19,3 +19,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Additional condition:
+If you (re)use parts of this code, please refer to
+Heyn, Hans-Martin, et al. "A system for automated vision-based sea-ice concentration detection and floe-size distribution indication from an icebreaker." International Conference on Offshore Mechanics and Arctic Engineering. Vol. 57762. American Society of Mechanical Engineers, 2017.
+
+@inproceedings{heyn2017system,
+  title={A system for automated vision-based sea-ice concentration detection and floe-size distribution indication from an icebreaker},
+  author={Heyn, Hans-Martin and Knoche, Martin and Zhang, Qin and Skjetne, Roger},
+  booktitle={International Conference on Offshore Mechanics and Arctic Engineering},
+  volume={57762},
+  pages={V008T07A012},
+  year={2017},
+  organization={American Society of Mechanical Engineers}
+}
